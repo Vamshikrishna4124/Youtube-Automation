@@ -1,11 +1,13 @@
 #!/bin/bash
 
-# Install FFmpeg
+set -e
+
+echo "Updating apt and installing ffmpeg..."
 apt-get update
 apt-get install -y ffmpeg
 
-# Install Python dependencies
-pip install -r requirements.txt
+echo "Installing Python dependencies..."
+pip install -r /app/requirements.txt
 
-# Run the main script
-python3 python/run_daily.py
+echo "Running daily script..."
+python3 /app/python/run_daily.py
