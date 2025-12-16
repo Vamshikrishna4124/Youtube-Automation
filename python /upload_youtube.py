@@ -1,24 +1,27 @@
 import os
-import google.auth
+import json
+from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 
-CLIENT_ID = os.getenv("YOUTUBE_CLIENT_ID")
-CLIENT_SECRET = os.getenv("YOUTUBE_CLIENT_SECRET")
-REFRESH_TOKEN = os.getenv("YOUTUBE_REFRESH_TOKEN")
+SCOPES = ["https://www.googleapis.com/auth/youtube.upload"]
 
 def get_youtube_service():
-    credentials = google.oauth2.credentials.Credentials(
-        None,
-        refresh_token=REFRESH_TOKEN,
-        token_uri="https://oauth2.googleapis.com/token",
-        client_id=CLIENT_ID,
-        client_secret=CLIENT_SECRET,
-        scopes=["https://www.googleapis.com/auth/youtube.upload"]
+    token_info = json.loads(os.environ["YOUTUBE_TOKEN_JSON"])
+    client_info = json.loads(os.environ["YOUTUBE_CLIENT_SECRET_JSON"])
+
+    credentials = Credentials(
+        token=token_info.get("token"),
+        refresh_token=token_info.get("refresh_token"),
+        token_uri=client_info["installed"]["token_uri"],
+        client_id=client_info["installed"]["client_id"],
+        client_secret=client_info["installed"]["client_secret"],
+        scopes=SCOPES,
     )
+
     return build("youtube", "v3", credentials=credentials)
 
-def upload_video(file_path, title, description):
+def upload_video(video_path, title, description):
     youtube = get_youtube_service()
 
     request = youtube.videos().insert(
@@ -27,15 +30,15 @@ def upload_video(file_path, title, description):
             "snippet": {
                 "title": title,
                 "description": description,
-                "tags": ["brainrot", "facts", "useless facts", "shorts"]
+                "categoryId": "22",
             },
-            "status": {"privacyStatus": "public"}
+            "status": {
+                "privacyStatus": "public",
+            },
         },
-        media_body=MediaFileUpload(file_path)
+        media_body=MediaFileUpload(video_path, resumable=True),
     )
 
     response = request.execute()
-    return response
+    print("Uploaded video ID:", response["id"])
 
-if __name__ == "__main__":
-    upload_video("short.mp4", "Test Upload", "Brainrot Short Test")
