@@ -2,7 +2,7 @@ name: Daily Brainrot Shorts Upload
 
 on:
   schedule:
-    - cron: "0 */5 * * *"   # every 5 hours (5 shorts/day)
+    - cron: "0 12 * * *"   # Runs daily at 12:00 UTC
   workflow_dispatch:
 
 jobs:
@@ -19,18 +19,16 @@ jobs:
           python-version: "3.11"
 
       - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y ffmpeg
-          pip install -r requirements.txt
+        run: pip install -r requirements.txt
 
-      - name: Run YouTube upload
+      - name: Add test video
+        run: |
+          echo "Creating dummy video"
+          ffmpeg -f lavfi -i color=c=black:s=1080x1920:d=5 short.mp4
+
+      - name: Upload to YouTube
         env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          ELEVEN_API_KEY: ${{ secrets.ELEVEN_API_KEY }}
           YOUTUBE_CLIENT_SECRET_JSON: ${{ secrets.YOUTUBE_CLIENT_SECRET_JSON }}
           YOUTUBE_TOKEN_JSON: ${{ secrets.YOUTUBE_TOKEN_JSON }}
-        run: |
-          ls
-          ls python
-          python python/upload_youtube.py
+        run: python python/run_daily.py
+
