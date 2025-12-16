@@ -1,9 +1,9 @@
 name: Daily Brainrot Shorts Upload
 
 on:
-  workflow_dispatch:   # manual run button
+  workflow_dispatch:
   schedule:
-    - cron: "30 3 * * *"   # daily at 9:00 AM IST
+    - cron: "30 5 * * *"   # daily at 11:00 AM IST
 
 jobs:
   upload:
@@ -28,11 +28,12 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Debug paths (safe)
+      - name: Debug paths (final check)
         run: |
-          pwd
-          ls -l
-          ls -l python || true
+          echo "Workspace:"
+          echo $GITHUB_WORKSPACE
+          ls -la $GITHUB_WORKSPACE
+          ls -la $GITHUB_WORKSPACE/python
 
       - name: Run daily automation
         env:
@@ -41,4 +42,5 @@ jobs:
           YOUTUBE_CLIENT_SECRET_JSON: ${{ secrets.YOUTUBE_CLIENT_SECRET_JSON }}
           YOUTUBE_TOKEN_JSON: ${{ secrets.YOUTUBE_TOKEN_JSON }}
         run: |
-          python python/run_daily.py
+          python $GITHUB_WORKSPACE/python/run_daily.py
+
