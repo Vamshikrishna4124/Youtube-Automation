@@ -31,4 +31,6 @@ jobs:
           YOUTUBE_CLIENT_SECRET_JSON: ${{ secrets.YOUTUBE_CLIENT_SECRET_JSON }}
           YOUTUBE_TOKEN_JSON: ${{ secrets.YOUTUBE_TOKEN_JSON }}
         run: |
+          ls
+          ls python
           python python/upload_youtube.py
