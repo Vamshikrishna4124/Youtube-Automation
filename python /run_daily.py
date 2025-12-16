@@ -5,21 +5,17 @@ from python.upload_youtube import upload_video
 
 
 def main():
-    print("🚀 Starting Daily Brainrot pipeline")
+    print("🚀 Starting Daily Brainrot Pipeline")
 
-    # 1. Generate text
     text = generate_fact()
     print("🧠 Fact generated")
 
-    # 2. Generate voice
     audio_path = generate_voice(text)
-    print(f"🔊 Audio created: {audio_path}")
+    print("🔊 Voice generated:", audio_path)
 
-    # 3. Build video
     video_path = build_video(audio_path)
-    print(f"🎬 Video created: {video_path}")
+    print("🎬 Video built:", video_path)
 
-    # 4. Upload to YouTube
     upload_video(
         video_path=video_path,
         title="Daily Brainrot 🤯",
