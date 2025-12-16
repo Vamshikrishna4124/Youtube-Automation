@@ -1,24 +1,55 @@
-from generate_facts import generate_facts
-from tts_voice import text_to_speech
-from build_video import build_video
-from upload_youtube import upload_video
-import random
-import time
+import os
+import json
+import tempfile
+from google.oauth2.credentials import Credentials
+from googleapiclient.discovery import build
+from googleapiclient.http import MediaFileUpload
 
-def run():
-    facts = generate_facts()
-    selected = random.sample(facts, 5)
+SCOPES = ["https://www.googleapis.com/auth/youtube.upload"]
 
-    for i, fact in enumerate(selected):
-        print(f"[+] Creating short {i+1}/5 → {fact}")
+def get_youtube_service():
+    # Load secrets from GitHub Actions env
+    client_secret = json.loads(os.environ["YOUTUBE_CLIENT_SECRET_JSON"])
+    token_data = json.loads(os.environ["YOUTUBE_TOKEN_JSON"])
 
-        audio = text_to_speech(fact, f"audio_{i}.mp3")
-        video = build_video(audio, fact, f"short_{i}.mp4")
+    credentials = Credentials(
+        token=token_data["access_token"],
+        refresh_token=token_data["refresh_token"],
+        token_uri=token_data["token_uri"],
+        client_id=token_data["client_id"],
+        client_secret=token_data["client_secret"],
+        scopes=SCOPES,
+    )
 
-        upload_video(video, fact, "Daily Brainrot Fact")
+    return build("youtube", "v3", credentials=credentials)
 
-        print("[✔] Uploaded successfully")
-        time.sleep(5)  # space uploads
+
+def upload_video():
+    youtube = get_youtube_service()
+
+    video_path = "short.mp4"
+
+    if not os.path.exists(video_path):
+        raise FileNotFoundError("short.mp4 not found")
+
+    request = youtube.videos().insert(
+        part="snippet,status",
+        body={
+            "snippet": {
+                "title": "Daily Brainrot Short 🤯",
+                "description": "Automated YouTube Short upload",
+                "categoryId": "22"
+            },
+            "status": {
+                "privacyStatus": "public"
+            },
+        },
+        media_body=MediaFileUpload(video_path, resumable=True),
+    )
+
+    response = request.execute()
+    print("✅ Uploaded video ID:", response["id"])
+
 
 if __name__ == "__main__":
-    run()
+    upload_video()
