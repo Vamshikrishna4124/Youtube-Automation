@@ -3,7 +3,7 @@ name: Daily Brainrot Shorts Upload
 on:
   workflow_dispatch:
   schedule:
-    - cron: "30 18 * * *"   # 12:00 AM IST
+    - cron: "30 18 * * *"  # 12:00 AM IST
 
 jobs:
   upload:
@@ -35,4 +35,4 @@ jobs:
           YOUTUBE_CLIENT_SECRET_JSON: ${{ secrets.YOUTUBE_CLIENT_SECRET_JSON }}
           YOUTUBE_TOKEN_JSON: ${{ secrets.YOUTUBE_TOKEN_JSON }}
         run: |
-          python python/run_daily.py
+          python -m python.run_daily
