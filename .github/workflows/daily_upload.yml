@@ -29,12 +29,11 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run daily automation
-        working-directory: ${{ github.workspace }}
+        run: |
+          cd python
+          python run_daily.py
         env:
-          PYTHONPATH: ${{ github.workspace }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
           YOUTUBE_CLIENT_SECRET_JSON: ${{ secrets.YOUTUBE_CLIENT_SECRET_JSON }}
           YOUTUBE_TOKEN_JSON: ${{ secrets.YOUTUBE_TOKEN_JSON }}
-        run: |
-          python -m python.run_daily
