@@ -1,7 +1,7 @@
-from .generate_facts import generate_fact
-from .tts_voice import generate_voice
-from .build_video import build_video
-from .upload_youtube import upload_video
+from generate_facts import generate_fact
+from tts_voice import generate_voice
+from build_video import build_video
+from upload_youtube import upload_video
 
 
 def main():
