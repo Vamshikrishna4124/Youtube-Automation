@@ -1,14 +1,14 @@
-from python.generate_facts import generate_fact
-from python.tts_voice import generate_voice
-from python.build_video import build_video
-from python.upload_youtube import upload_video
+from .generate_facts import generate_fact
+from .tts_voice import generate_voice
+from .build_video import build_video
+from .upload_youtube import upload_video
 
 
 def main():
     print("🚀 Starting Daily Brainrot Pipeline")
 
     text = generate_fact()
-    print("🧠 Fact generated")
+    print("🧠 Fact generated:", text)
 
     audio_path = generate_voice(text)
     print("🔊 Voice generated:", audio_path)
